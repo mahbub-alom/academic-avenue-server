@@ -16,7 +16,7 @@ const client = new MongoClient(uri, {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 
 async function run() {
@@ -27,26 +27,25 @@ async function run() {
     //collection
     const userCollections = client.db("academicAvenue").collection("users");
 
-
-
-    // users operations 
+    // users operations
     app.post("/users", async (req, res) => {
-        const user = req.body;
-        const query = { email: user.email };
-        console.log(query);
-        const existingUser = await userCollections.findOne(query);
-        if (existingUser) {
-          return res.send({ message: "User already exists" });
-        } else {
-          const result = await userCollections.insertOne(user);
-          res.send(result);
-        }
-      });
-
+      const user = req.body;
+      console.log(user);
+      const query = { email: user.email };
+      const existingUser = await userCollections.findOne(query);
+      if (existingUser) {
+        return res.send({ message: "User already exists" });
+      } else {
+        const result = await userCollections.insertOne(user);
+        res.send(result);
+      }
+    });
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
@@ -54,11 +53,10 @@ async function run() {
 }
 run().catch(console.dir);
 
-
-app.get("/",(req,res)=>{
-    res.send('academic avenue running ...')
+app.get("/", (req, res) => {
+  res.send("academic avenue running ...");
 });
 
-app.listen(port,()=>{
-    console.log(`academic avenue listening on port ${port}`);
-})
+app.listen(port, () => {
+  console.log(`academic avenue listening on port ${port}`);
+});
