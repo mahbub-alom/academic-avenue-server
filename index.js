@@ -1,7 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const port = process.env.PORT || 5000;
 
@@ -26,6 +26,8 @@ async function run() {
 
     //collection
     const userCollections = client.db("academicAvenue").collection("users");
+    const collegeData = client.db("academicAvenue").collection("colleges");
+    const admission = client.db("academicAvenue").collection("admissionData");
 
     // users operations
     app.post("/users", async (req, res) => {
@@ -40,6 +42,29 @@ async function run() {
         res.send(result);
       }
     });
+
+    app.get("/users", async (req, res) => {
+      const result = await userCollections.find().toArray();
+      res.send(result);
+    });
+
+    app.get("/update/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const data = await userCollections.findOne(filter);
+      res.send(data);
+    });
+
+    app.get("/collegeData", async (req, res) => {
+      const result = await collegeData.find().toArray();
+      res.send(result);
+    });
+
+    app.post("/data",async (req, res) => {
+        const data = req.body;
+        const result = await admission.insertOne(data);
+        res.send(result);
+      });
 
     // Send a ping to confirm a successful connection
     // await client.db("admin").command({ ping: 1 });
